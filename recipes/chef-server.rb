@@ -23,32 +23,32 @@ include_recipe 'chef-server::addons'
 
 node['chef-server']['users'].each do |user|
   node.run_state['chef-users'] ||= {}
-  node.run_state['chef-users'][user.name] ||= {}
-  node.run_state['chef-users'][user.name]['password'] = SecureRandom.hex(36)
+  node.run_state['chef-users'][user[:name]] ||= {}
+  node.run_state['chef-users'][user[:name]]['password'] = SecureRandom.hex(36)
 
-  file "/etc/opscode/#{user.name}.password" do
+  file "/etc/opscode/#{user[:name]}.password" do
     sensitive true
-    content node.run_state['chef-users'][user.name]['password']
+    content node.run_state['chef-users'][user[:name]]['password']
     action :nothing
   end
 
-  chef_server_user user.name do
+  chef_server_user user[:name] do
     sensitive true
-    firstname user.first
-    lastname user.last
-    email user.email
-    password node.run_state['chef-users'][user.name]['password']
-    private_key_path "/etc/opscode/#{user.name}.pem"
+    firstname user[:first]
+    lastname user[:last]
+    email user[:email]
+    password node.run_state['chef-users'][user[:name]]['password']
+    private_key_path "/etc/opscode/#{user[:name]}.pem"
     action :create
-    notifies :create, "file[/etc/opscode/#{user.name}.password]", :immediately
+    notifies :create, "file[/etc/opscode/#{user[:name]}.password]", :immediately
   end
 end
 
 node['chef-server']['orgs'].each do |org|
-  chef_server_org org.name do
-    org_long_name org.long_name
-    org_private_key_path "/etc/opscode/#{org.name}-validator.pem"
-    admins org.admins
+  chef_server_org org[:name] do
+    org_long_name org[:long_name]
+    org_private_key_path "/etc/opscode/#{org[:name]}-validator.pem"
+    admins org[:admins]
     action [:create, :add_admin]
   end
 end
