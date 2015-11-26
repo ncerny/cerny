@@ -4,7 +4,7 @@ maintainer_email 'you@example.com'
 license 'all_rights'
 description 'Installs/Configures cerny'
 long_description 'Installs/Configures cerny'
-version '0.2.3'
+version '0.2.4'
 
 supports 'redhat'
 

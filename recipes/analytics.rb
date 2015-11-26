@@ -18,31 +18,13 @@
 #
 # rubocop:disable LineLength
 
-include_recipe 'chef-vault'
-
-begin
-  chef_server_secrets = chef_vault_item('chef-server-secrets', node.chef_environment)
-  chef_server_secrets.delete('id')
-rescue
-  raise 'The chef-server must be built first to generate secrets!'
-end
+get_chef_secrets
 
 include_recipe 'firewalld'
 
 firewalld_service 'https' do
   zone 'public'
   notifies :reload, 'service[firewalld]', :delayed
-end
-
-chef_server_secrets.each do |key, value|
-  directory key[%r{^(?<path>.*)/([^/])}, 'path'] do
-    recursive true
-  end
-
-  file key do
-    sensitive true
-    content value.to_s
-  end
 end
 
 include_recipe 'chef-analytics'
