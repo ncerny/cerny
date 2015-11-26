@@ -15,9 +15,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# rubocop:disable LineLength
 
 require 'securerandom'
 
+include_recipe 'chef-vault'
 include_recipe 'chef-server'
 include_recipe 'chef-server::addons'
 
@@ -77,3 +80,26 @@ node['chef-server']['orgs'].each do |org|
     action [:create, :add_admin]
   end
 end
+
+node.run_state['chef-server-secrets'] = { 'id' => node.chef_environment }
+
+ruby_block 'gather chef-server secrets' do
+  block do
+    files = Dir.glob('/etc/opscode*/*.{rb,pem,pub,json}')
+    files.each do |file|
+      node.run_state['chef-server-secrets'][file] = IO.read(file)
+    end
+  end
+  action :run
+end
+
+chef_vault_secret node.chef_environment do
+  data_bag 'chef-server-secrets'
+  raw_data(node.run_state['chef-server-secrets'])
+  admins node.name
+  clients "chef_environment:#{node.chef_environment}"
+  search "chef_environment:#{node.chef_environment}"
+  only_if { File.exist?('/etc/opscode/private-chef-secrets.json') }
+end
+
+# rubocop:enable LineLength
