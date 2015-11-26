@@ -4,7 +4,7 @@ maintainer_email 'you@example.com'
 license 'all_rights'
 description 'Installs/Configures cerny'
 long_description 'Installs/Configures cerny'
-version '0.2.5'
+version '0.3.0'
 
 supports 'redhat'
 
@@ -13,3 +13,4 @@ depends 'chef-server-ctl'
 depends 'firewalld'
 depends 'chef-vault'
 depends 'chef-analytics'
+depends 'supermarket-omnibus-cookbook'
