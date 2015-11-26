@@ -18,6 +18,8 @@
 #
 # rubocop:disable LineLength
 
+include_recipe 'chef-vault'
+
 begin
   chef_server_secrets = chef_vault_item('chef-server-secrets', node.chef_environment)
   chef_server_secrets.delete('id')
