@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: cerny
-# Recipe:: analytics
+# Library:: helpers
 #
 # Copyright 2015 Nathan Cerny
 #
@@ -16,13 +16,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-get_chef_secrets
+def get_chef_secrets
+  include_recipe 'chef-vault'
 
-include_recipe 'firewalld'
+  begin
+    chef_server_secrets = chef_vault_item('chef-server-secrets', node.chef_environment)
+    chef_server_secrets.delete('id')
+  rescue
+    raise 'The chef-server must be built first to generate secrets!'
+  end
 
-firewalld_service 'https' do
-  zone 'public'
-  notifies :reload, 'service[firewalld]', :delayed
+  chef_server_secrets.each do |key, value|
+    directory key[%r{^(?<path>.*)/([^/])}, 'path'] do
+      recursive true
+    end
+
+    file key do
+      sensitive true
+      content value.to_s
+    end
+  end
 end
-
-include_recipe 'chef-analytics'
