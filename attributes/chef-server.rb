@@ -17,7 +17,7 @@
 
 default['chef-server']['version'] = nil
 default['chef-server']['api_fqdn'] = 'chef.cerny.cc'
-default['chef-server']['addons'] = %w(manage reporting push-server)
+default['chef-server']['addons'] = %w(manage reporting) # push-server
 default['chef-server']['configuration'] = <<-EOF
   oc_id['applications'] = {
     "analytics"=>{"redirect_uri"=>"https://analytics.cerny.cc/"},
