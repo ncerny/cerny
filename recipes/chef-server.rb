@@ -84,6 +84,7 @@ end
 node.run_state['chef-server-secrets'] = { 'id' => node.chef_environment }
 
 ruby_block 'gather chef-server secrets' do
+  sensitive true
   block do
     files = Dir.glob('/etc/opscode*/*.{rb,pem,pub,json}')
     files.each do |file|
@@ -94,6 +95,7 @@ ruby_block 'gather chef-server secrets' do
 end
 
 chef_vault_secret node.chef_environment do
+  sensitive true
   data_bag 'chef-server-secrets'
   raw_data(node.run_state['chef-server-secrets'])
   admins node.name
