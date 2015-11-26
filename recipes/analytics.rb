@@ -27,6 +27,13 @@ rescue
   raise 'The chef-server must be built first to generate secrets!'
 end
 
+include_recipe 'firewalld'
+
+firewalld_service 'https' do
+  zone 'public'
+  notifies :reload, 'service[firewalld]', :delayed
+end
+
 chef_server_secrets.each do |key, value|
   directory key[%r{^(?<path>.*)/([^/])}, 'path'] do
     recursive true
