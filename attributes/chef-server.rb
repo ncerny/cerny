@@ -23,7 +23,7 @@ default['chef-server']['configuration'] = <<-EOF
     "analytics"=>{"redirect_uri"=>"https://analytics.cerny.cc/"},
     "supermarket"=>{"redirect_uri"=>"https://supermarket.cerny.cc/auth/chef_oauth2/callback"}
   }
-  rabbitmq['vip'] = '192.168.200.207'
+  rabbitmq['vip'] = '192.168.200.50'
   rabbitmq['node_ip_address'] = '0.0.0.0'
 EOF
 
