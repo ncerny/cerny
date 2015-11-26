@@ -87,6 +87,7 @@ ruby_block 'gather chef-server secrets' do
   sensitive true
   block do
     files = Dir.glob('/etc/opscode*/*.{rb,pem,pub,json}')
+    files += Dir.glob('/etc/opscode*/*/*.{rb,pem,pub,json}')
     files.each do |file|
       node.run_state['chef-server-secrets'][file] = IO.read(file)
     end
