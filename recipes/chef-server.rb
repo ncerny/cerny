@@ -21,6 +21,31 @@ require 'securerandom'
 include_recipe 'chef-server'
 include_recipe 'chef-server::addons'
 
+include_recipe 'firewalld'
+
+firewalld_service 'https' do
+  zone 'public'
+  notifies :reload, 'service[firewalld]', :delayed
+end
+
+# rabbitmq
+firewalld_port '5672/tcp' do
+  zone 'public'
+  notifies :reload, 'service[firewalld]', :delayed
+end
+
+# Push-Jobs Heartbeat Port
+firewalld_port '10000/tcp' do
+  zone 'public'
+  notifies :reload, 'service[firewalld]', :delayed
+end
+
+# Push-Jobs Command Port
+firewalld_port '10003/tcp' do
+  zone 'public'
+  notifies :reload, 'service[firewalld]', :delayed
+end
+
 node['chef-server']['users'].each do |user|
   node.run_state['chef-users'] ||= {}
   node.run_state['chef-users'][user[:name]] ||= {}
