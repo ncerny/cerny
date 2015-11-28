@@ -54,10 +54,27 @@ node['chef-server']['users'].each do |user|
   node.run_state['chef-users'][user[:name]] ||= {}
   node.run_state['chef-users'][user[:name]]['password'] = SecureRandom.hex(36)
 
-  file "/etc/opscode/#{user[:name]}.password" do
+  user user[:name] do
+    comment "#{user[:first]} #{user[:last]}"
+    shell '/bin/bash'
+    home "/home/#{user[:name]}"
+    password node.run_state['chef-users'][user[:name]]['password']
+  end
+
+  file "/home/#{user[:name]}.password" do
     sensitive true
     content node.run_state['chef-users'][user[:name]]['password']
+    owner user[:name]
+    group user[:name]
+    mode '0600'
     action :nothing
+  end
+
+  file "/home/#{user[:name]}.pem" do
+    owner user[:name]
+    group user[:name]
+    mode '0600'
+    action :create
   end
 
   chef_server_user user[:name] do
@@ -66,9 +83,9 @@ node['chef-server']['users'].each do |user|
     lastname user[:last]
     email user[:email]
     password node.run_state['chef-users'][user[:name]]['password']
-    private_key_path "/etc/opscode/#{user[:name]}.pem"
+    private_key_path "/home/#{user[:name]}.pem"
     action :create
-    notifies :create, "file[/etc/opscode/#{user[:name]}.password]", :immediately
+    notifies :create, "file[/home/#{user[:name]}.password]", :immediately
   end
 end
 
@@ -81,28 +98,36 @@ node['chef-server']['orgs'].each do |org|
   end
 end
 
-node.run_state['chef-server-secrets'] = { 'id' => node.chef_environment }
+execute 'Delivery ssh keys' do
+  user 'delivery'
+  creates '/home/delivery/.ssh/id_rsa.pub'
+  command 'ssh-keygen -t rsa -q -f /home/delivery/.ssh/id_rsa -P \"\"'
+end
 
 ruby_block 'gather chef-server secrets' do
   sensitive true
   block do
-    files = Dir.glob('/etc/opscode*/*.{rb,pem,pub,json}')
-    files += Dir.glob('/etc/opscode*/*/*.{rb,pem,pub,json}')
-    files.each do |file|
-      node.run_state['chef-server-secrets'][file] = IO.read(file)
+    node.run_state['chef-secrets'] = { 'id' => node.chef_environment }
+    Dir.chdir('/etc/')
+    Dir.glob('opscode*').each do |dir|
+      node.run_state['chef-secrets'][dir] ||= {}
+      Dir.glob(File.join('**', '*.{rb,json,pem,pub}')).each do |file|
+        node.run_state['chef-secrets'][dir][file] = IO.read(file)
+      end
+    end
+    File.join('/home/delivery/**', '*').each do |file|
+      node.run_state['chef-secrets']['delivery'][file] = IO.read(file)
     end
   end
-  action :run
 end
 
 chef_vault_secret node.chef_environment do
   sensitive true
-  data_bag 'chef-server-secrets'
-  raw_data(node.run_state['chef-server-secrets'])
+  data_bag 'chef-secrets'
+  raw_data(node.run_state['chef-secrets'])
   admins node.name
   clients "chef_environment:#{node.chef_environment}"
   search "chef_environment:#{node.chef_environment}"
-  only_if { File.exist?('/etc/opscode/private-chef-secrets.json') }
 end
 
 # rubocop:enable LineLength

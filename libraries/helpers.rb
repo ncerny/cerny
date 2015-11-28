@@ -16,24 +16,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-def get_chef_secrets
+def load_secrets
   include_recipe 'chef-vault'
-
   begin
-    chef_server_secrets = chef_vault_item('chef-server-secrets', node.chef_environment)
-    chef_server_secrets.delete('id')
+    chef_secrets = chef_vault_item('chef-secrets', node.chef_environment)
+    chef_secrets.delete('id')
   rescue
     raise 'The chef-server must be built first to generate secrets!'
   end
+  chef_secrets
+end
 
-  chef_server_secrets.each do |key, value|
-    directory key[%r{^(?<path>.*)/([^/])}, 'path'] do
-      recursive true
-    end
-
-    file key do
-      sensitive true
-      content value.to_s
+def write_secrets
+  load_secrets.each do |key, value|
+    directory "/etc/#{key}"
+    value.each do |k, v|
+      path = k[%r{^(?<path>.*)/(?<file>[^/]*)|(?<file>[^/]*)}, 'path']
+      directory "/etc/#{key}/#{path}" do
+        recursive true
+      end if path
+      file "/etc/#{key}/#{k}" do
+        sensitive true
+        content v.to_s
+        mode '0600'
+      end
     end
   end
 end
