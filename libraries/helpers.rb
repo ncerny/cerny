@@ -27,15 +27,16 @@ def load_secrets
   chef_secrets
 end
 
-def write_secrets
+def write_secrets(path = nil)
   load_secrets.each do |key, value|
-    directory "/etc/#{key}"
+    next unless nil?(path) || path.eql?(key)
+    directory key
     value.each do |k, v|
       path = k[%r{^(?<path>.*)/(?<file>[^/]*)|(?<file>[^/]*)}, 'path']
-      directory "/etc/#{key}/#{path}" do
+      directory "#{key}/#{path}" do
         recursive true
       end if path
-      file "/etc/#{key}/#{k}" do
+      file "#{key}/#{k}" do
         sensitive true
         content v.to_s
         mode '0600'

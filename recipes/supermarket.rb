@@ -24,7 +24,7 @@ firewalld_service 'https' do
   notifies :reload, 'service[firewalld]', :delayed
 end
 
-supermarket = JSON.load(load_secrets['opscode']['oc-id-applications/supermarket.json']) # rubocop:disable LineLength
+supermarket = JSON.load(load_secrets['/etc/opscode']['oc-id-applications/supermarket.json']) # rubocop:disable LineLength
 
 supermarket_server 'supermarket' do
   chef_server_url 'https://chef.cerny.cc'

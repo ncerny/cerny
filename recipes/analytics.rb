@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-get_chef_secrets
+write_secrets('/etc/opscode-analytics')
 
 include_recipe 'firewalld'
 
