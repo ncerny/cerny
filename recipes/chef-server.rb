@@ -115,7 +115,7 @@ ruby_block 'gather chef-server secrets' do
         node.run_state['chef-secrets'][dir][file] = IO.read(file)
       end
     end
-    File.join('/home/delivery/**', '*').each do |file|
+    Dir.glob('/home/delivery/{**,.ssh}/*').each do |file|
       node.run_state['chef-secrets']['delivery'][file] = IO.read(file)
     end
   end
