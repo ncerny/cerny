@@ -43,3 +43,34 @@ def write_secrets
     end
   end
 end
+
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/MethodLength
+def gather_secrets
+  hash = { 'id' => node.chef_environment }
+  Dir.glob('/etc/opscode*').each do |dir|
+    hash[dir] ||= {}
+    Dir.glob(File.join(dir, '**', '*.{rb,json,pem,pub}')).each do |file|
+      hash[dir][file] = IO.read(file)
+    end
+  end
+  hash['/etc/delivery'] ||= {}
+  Dir.glob('/home/delivery/{**,.ssh}/*').each do |file|
+    hash['/etc/delivery'][file] = IO.read(file)
+  end
+  hash
+end
+
+def write_secrets
+  chef_vault_secret node.chef_environment do
+    sensitive true
+    data_bag 'chef-secrets'
+    raw_data(gather_secrets)
+    admins node.name
+    clients "chef_environment:#{node.chef_environment}"
+    search "chef_environment:#{node.chef_environment}"
+  end
+end
+
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/MethodLength
