@@ -61,7 +61,7 @@ node['chef-server']['users'].each do |user|
     password node.run_state['chef-users'][user[:name]]['password']
   end
 
-  file "/home/#{user[:name]}.password" do
+  file "/home/#{user[:name]}/.password" do
     sensitive true
     content node.run_state['chef-users'][user[:name]]['password']
     owner user[:name]
@@ -70,7 +70,7 @@ node['chef-server']['users'].each do |user|
     action :nothing
   end
 
-  file "/home/#{user[:name]}.pem" do
+  file "/home/#{user[:name]}/#{user[:name]}.pem" do
     owner user[:name]
     group user[:name]
     mode '0600'
@@ -83,9 +83,9 @@ node['chef-server']['users'].each do |user|
     lastname user[:last]
     email user[:email]
     password node.run_state['chef-users'][user[:name]]['password']
-    private_key_path "/home/#{user[:name]}.pem"
+    private_key_path "/home/#{user[:name]}/#{user[:name]}.pem"
     action :create
-    notifies :create, "file[/home/#{user[:name]}.password]", :immediately
+    notifies :create, "file[/home/#{user[:name]}/.password]", :immediately
   end
 end
 
@@ -101,7 +101,7 @@ end
 execute 'Delivery ssh keys' do
   user 'delivery'
   creates '/home/delivery/.ssh/id_rsa.pub'
-  command 'ssh-keygen -t rsa -q -f /home/delivery/.ssh/id_rsa -P \"\"'
+  command 'ssh-keygen -t rsa -q -f /home/delivery/.ssh/id_rsa -P ""'
 end
 
 ruby_block 'gather chef-server secrets' do
