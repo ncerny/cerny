@@ -108,16 +108,15 @@ ruby_block 'gather chef-server secrets' do
   sensitive true
   block do
     node.run_state['chef-secrets'] = { 'id' => node.chef_environment }
-    Dir.chdir('/etc/')
-    Dir.glob('opscode*').each do |dir|
+    Dir.glob('/etc/opscode*').each do |dir|
       node.run_state['chef-secrets'][dir] ||= {}
       Dir.glob(File.join('**', '*.{rb,json,pem,pub}')).each do |file|
         node.run_state['chef-secrets'][dir][file] = IO.read(file)
       end
     end
-    node.run_state['chef-secrets']['delivery'] ||= {}
+    node.run_state['chef-secrets']['/etc/delivery'] ||= {}
     Dir.glob('/home/delivery/{**,.ssh}/*').each do |file|
-      node.run_state['chef-secrets']['delivery'][file] = IO.read(file)
+      node.run_state['chef-secrets']['/etc/delivery'][file] = IO.read(file)
     end
   end
 end
@@ -125,7 +124,7 @@ end
 chef_vault_secret node.chef_environment do
   sensitive true
   data_bag 'chef-secrets'
-  raw_data(node.run_state['chef-secrets'])
+  raw_data(lazy { node.run_state['chef-secrets'] })
   admins node.name
   clients "chef_environment:#{node.chef_environment}"
   search "chef_environment:#{node.chef_environment}"
