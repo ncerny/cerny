@@ -59,6 +59,7 @@ node['chef-server']['users'].each do |user|
     shell '/bin/bash'
     home "/home/#{user[:name]}"
     password node.run_state['chef-users'][user[:name]]['password']
+    action :create
   end
 
   file "/home/#{user[:name]}/.password" do
@@ -104,6 +105,13 @@ execute 'Delivery ssh keys' do
   command 'ssh-keygen -t rsa -q -f /home/delivery/.ssh/id_rsa -P ""'
 end
 
-write_secrets
+chef_vault_secret node.chef_environment do
+  sensitive true
+  data_bag 'chef-secrets'
+  raw_data(gather_secrets)
+  admins node.name
+  clients "chef_environment:#{node.chef_environment}"
+  search "chef_environment:#{node.chef_environment}"
+end
 
 # rubocop:enable LineLength

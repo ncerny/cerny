@@ -1,10 +1,10 @@
 name 'cerny'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
-license 'all_rights'
-description 'Installs/Configures cerny'
-long_description 'Installs/Configures cerny'
-version '0.3.15'
+maintainer 'Nathan Cerny'
+maintainer_email 'ncerny@gmail.com'
+license 'apache2'
+description 'Cookbook for Maintaining Cerny Infrastructure'
+long_description 'Installs and maintains my personal infrastructure'
+version '0.3.23'
 
 supports 'redhat'
 

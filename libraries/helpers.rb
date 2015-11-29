@@ -27,16 +27,17 @@ def load_secrets
   chef_secrets
 end
 
-def write_secrets(path = nil)
+# rubocop:disable Metrics/MethodLength
+def write_secrets(product = nil)
   load_secrets.each do |key, value|
-    next unless nil?(path) || path.eql?(key)
-    directory key
+    product ||= key
+    next unless product == key
     value.each do |k, v|
       path = k[%r{^(?<path>.*)/(?<file>[^/]*)|(?<file>[^/]*)}, 'path']
-      directory "#{key}/#{path}" do
+      directory path do
         recursive true
-      end if path
-      file "#{key}/#{k}" do
+      end
+      file k do
         sensitive true
         content v.to_s
         mode '0600'
@@ -46,7 +47,6 @@ def write_secrets(path = nil)
 end
 
 # rubocop:disable Metrics/AbcSize
-# rubocop:disable Metrics/MethodLength
 def gather_secrets
   hash = { 'id' => node.chef_environment }
   Dir.glob('/etc/opscode*').each do |dir|
@@ -60,17 +60,6 @@ def gather_secrets
     hash['/etc/delivery'][file] = IO.read(file)
   end
   hash
-end
-
-def write_secrets
-  chef_vault_secret node.chef_environment do
-    sensitive true
-    data_bag 'chef-secrets'
-    raw_data(gather_secrets)
-    admins node.name
-    clients "chef_environment:#{node.chef_environment}"
-    search "chef_environment:#{node.chef_environment}"
-  end
 end
 
 # rubocop:enable Metrics/AbcSize

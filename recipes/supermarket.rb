@@ -24,12 +24,12 @@ firewalld_service 'https' do
   notifies :reload, 'service[firewalld]', :delayed
 end
 
-supermarket = JSON.load(load_secrets['/etc/opscode']['oc-id-applications/supermarket.json']) # rubocop:disable LineLength
+supermarket = JSON.load(load_secrets['/etc/opscode']['/etc/opscode/oc-id-applications/supermarket.json']) # rubocop:disable LineLength
 
 supermarket_server 'supermarket' do
   chef_server_url 'https://chef.cerny.cc'
-  chef_oauth2_app_id lazy supermarket['uid']
-  chef_oauth2_secret lazy supermarket['secret']
+  chef_oauth2_app_id supermarket['uid']
+  chef_oauth2_secret supermarket['secret']
   chef_oauth2_verify_ssl false
   config node['supermarket_omnibus']['config'].to_hash
 end
