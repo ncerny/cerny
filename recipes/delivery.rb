@@ -20,3 +20,30 @@
 directory '/etc/delivery' do
   recursive true
 end
+
+directory '/var/opt/delivery/license' do
+  recursive true
+end
+
+write_secrets('/etc/delivery')
+
+link '/var/opt/delivery/license/delivery.license' do
+  to '/etc/delivery/delivery.license'
+end
+
+chef_ingredient 'delivery' do
+  config <<-EOS
+delivery_fqdn "#{node['fqdn']}"
+delivery['chef_username']    = "delivery"
+delivery['chef_private_key'] = "/etc/delivery/delivery.pem"
+delivery['chef_server']      = "https://chef.cerny.cc/organizations/chef_delivery"
+delivery['default_search']   = "((recipes:delivery_build OR recipes:delivery_build\\\\\\\\:\\\\\\\\:default) AND chef_environment:#{node.chef_environment})"
+  EOS
+  channel :stable
+  version node['delivery']['version']
+  action :install
+end
+
+ingredient_config 'delivery' do
+  notifies :reconfigure, 'chef_ingredient[delivery]', :immediately
+end

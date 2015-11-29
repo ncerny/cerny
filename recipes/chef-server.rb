@@ -101,8 +101,8 @@ end
 
 execute 'Delivery ssh keys' do
   user 'delivery'
-  creates '/home/delivery/.ssh/id_rsa.pub'
-  command 'ssh-keygen -t rsa -q -f /home/delivery/.ssh/id_rsa -P ""'
+  creates '/home/delivery/.ssh/builder_key.pub'
+  command 'ssh-keygen -t rsa -q -f /home/delivery/.ssh/builder_key -P ""'
 end
 
 chef_vault_secret node.chef_environment do
