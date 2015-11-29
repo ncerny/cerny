@@ -27,8 +27,8 @@ end
 
 write_secrets('/etc/delivery')
 
-link '/var/opt/delivery/license/delivery.license' do
-  to '/etc/delivery/delivery.license'
+cookbook_file '/var/opt/delivery/license/delivery.license' do
+  source 'delivery.license'
 end
 
 chef_ingredient 'delivery' do
