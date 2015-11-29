@@ -105,6 +105,10 @@ execute 'Delivery ssh keys' do
   command 'ssh-keygen -t rsa -q -f /home/delivery/.ssh/builder_key -P ""'
 end
 
+link '/etc/delivery' do
+  to '/home/delivery'
+end
+
 chef_vault_secret node.chef_environment do
   sensitive true
   data_bag 'chef-secrets'

@@ -56,7 +56,7 @@ def gather_secrets
     end
   end
   hash['/etc/delivery'] ||= {}
-  Dir.glob('/home/delivery/{**,.ssh}/*').each do |file|
+  Dir.glob('/etc/delivery/{**,.ssh}/*').each do |file|
     hash['/etc/delivery'][file] = IO.read(file)
   end
   hash
