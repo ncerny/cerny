@@ -4,7 +4,7 @@ maintainer_email 'ncerny@gmail.com'
 license 'apache2'
 description 'Cookbook for Maintaining Cerny Infrastructure'
 long_description 'Installs and maintains my personal infrastructure'
-version '0.4.2'
+version '0.4.3'
 
 supports 'redhat'
 

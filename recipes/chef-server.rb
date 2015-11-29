@@ -101,8 +101,8 @@ end
 
 execute 'Delivery ssh keys' do
   user 'delivery'
-  creates '/home/delivery/.ssh/builder_key.pub'
-  command 'ssh-keygen -t rsa -q -f /home/delivery/.ssh/builder_key -P ""'
+  creates '/home/delivery/builder_key.pub'
+  command 'ssh-keygen -t rsa -q -f /home/delivery/builder_key -P ""'
 end
 
 link '/etc/delivery' do
