@@ -4,7 +4,7 @@ maintainer_email 'ncerny@gmail.com'
 license 'apache2'
 description 'Cookbook for Maintaining Cerny Infrastructure'
 long_description 'Installs and maintains my personal infrastructure'
-version '0.4.6'
+version '0.5.0'
 
 supports 'redhat'
 
@@ -14,3 +14,4 @@ depends 'firewalld'
 depends 'chef-vault'
 depends 'chef-analytics'
 depends 'supermarket-omnibus-cookbook'
+depends 'push-jobs'
