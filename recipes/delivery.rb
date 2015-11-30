@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# rubocop:disable LineLength
 
 directory '/etc/delivery' do
   recursive true
@@ -47,3 +48,10 @@ end
 ingredient_config 'delivery' do
   notifies :reconfigure, 'chef_ingredient[delivery]', :immediately
 end
+
+execute 'create cerny enterprise' do
+  command 'delivery-ctl create-enterprise cerny --ssh-pub-key-file=/etc/delivery/builder_key.pub > /etc/delivery/cerny.creds'
+  not_if "delivery-ctl list-enterprises --ssh-pub-key-file=/etc/delivery/builder_key.pub | grep -w cerny"
+end
+
+# rubocop:enable LineLength
