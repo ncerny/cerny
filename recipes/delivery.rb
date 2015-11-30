@@ -40,7 +40,7 @@ delivery['chef_server']      = "https://chef.cerny.cc/organizations/chef_deliver
 delivery['default_search']   = "((recipes:delivery_build OR recipes:delivery_build\\\\\\\\:\\\\\\\\:default) AND chef_environment:#{node.chef_environment})"
   EOS
   channel :stable
-  version node['delivery']['version']
+  version '0.3.391'
   action :install
 end
 

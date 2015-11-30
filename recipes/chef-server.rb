@@ -99,14 +99,24 @@ node['chef-server']['orgs'].each do |org|
   end
 end
 
+directory '/etc/delivery'
+
 execute 'Delivery ssh keys' do
   user 'delivery'
   creates '/home/delivery/builder_key.pub'
   command 'ssh-keygen -t rsa -q -f /home/delivery/builder_key -P ""'
 end
 
-link '/etc/delivery' do
-  to '/home/delivery'
+link '/etc/delivery/delivery.pem' do
+  to '/home/delivery/delivery.pem'
+end
+
+link '/etc/delivery/builder_key' do
+  to '/home/delivery/builder_key'
+end
+
+link '/etc/delivery/builder_key.pub' do
+  to '/home/delivery/builder_key.pub'
 end
 
 chef_vault_secret node.chef_environment do
