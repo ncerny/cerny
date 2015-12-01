@@ -40,9 +40,6 @@ delivery['chef_private_key'] = "/etc/delivery/delivery.pem"
 delivery['chef_server']      = "https://chef.cerny.cc/organizations/chef_delivery"
 delivery['default_search']   = "((recipes:cerny\\\\\\\\:\\\\\\\\:delivery_build) AND chef_environment:#{node.chef_environment})"
   EOS
-  channel :stable
-  version '0.3.391'
-  action :install
 end
 
 ingredient_config 'delivery' do
