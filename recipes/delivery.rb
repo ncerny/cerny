@@ -51,7 +51,7 @@ end
 
 execute 'create cerny enterprise' do
   command 'delivery-ctl create-enterprise cerny --ssh-pub-key-file=/etc/delivery/builder_key.pub > /etc/delivery/cerny.creds'
-  not_if "delivery-ctl list-enterprises --ssh-pub-key-file=/etc/delivery/builder_key.pub | grep -w cerny"
+  not_if 'delivery-ctl list-enterprises --ssh-pub-key-file=/etc/delivery/builder_key.pub | grep -w cerny'
 end
 
 # rubocop:enable LineLength

@@ -30,5 +30,33 @@ cookbook_file '/var/opt/delivery/license/delivery.license' do
   source 'delivery.license'
 end
 
+directory '/var/opt/delivery/workspace/etc/' do
+  recursive true
+end
+
+directory '/var/opt/delivery/workspace/.chef' do
+  recursive true
+end
+
+link '/var/opt/delivery/workspace/etc/builder_key' do
+  to '/etc/delivery/builder_key'
+end
+
+link '/var/opt/delivery/workspace/etc/delivery.pem' do
+  to '/etc/delivery/delivery.pem'
+end
+
+link '/var/opt/delivery/workspace/.chef/builder_key' do
+  to '/etc/delivery/builder_key'
+end
+
+link '/var/opt/delivery/workspace/.chef/delivery.pem' do
+  to '/etc/delivery/delivery.pem'
+end
+
+execute 'knife ssl fetch https://delivery.cerny.cc' do
+  not_if 'knife ssl check https://delivery.cerny.cc'
+end
+
 include_recipe 'delivery_build'
 include_recipe 'push_jobs'
