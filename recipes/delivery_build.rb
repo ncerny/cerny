@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+node.default['chef-client']['config']['encrypted_data_bag_secret'] = '/etc/delivery/encrypted_data_bag_secret'
+
 directory '/etc/delivery' do
   recursive true
 end

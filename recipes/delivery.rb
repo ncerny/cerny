@@ -18,6 +18,8 @@
 #
 # rubocop:disable LineLength
 
+node.default['chef-client']['config']['encrypted_data_bag_secret'] = '/etc/delivery/encrypted_data_bag_secret'
+
 directory '/etc/delivery' do
   recursive true
 end
