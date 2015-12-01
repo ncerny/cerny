@@ -99,6 +99,14 @@ node['chef-server']['orgs'].each do |org|
   end
 end
 
+execute 'Generate Encrypted Data Bag Secret' do
+  command 'openssl rand -base64 512 | tr -d "\r\n" > /etc/opscode/encrypted_data_bag_secret'
+  creates '/etc/opscode/encrypted_data_bag_secret'
+  owner 'root'
+  group 'root'
+  mode '0600'
+end
+
 directory '/etc/delivery'
 
 execute 'Delivery ssh keys' do
@@ -117,6 +125,10 @@ end
 
 link '/etc/delivery/builder_key.pub' do
   to '/home/delivery/builder_key.pub'
+end
+
+link '/etc/delivery/encrypted_data_bag_secret' do
+  to '/etc/opscode/encrypted_data_bag_secret'
 end
 
 chef_vault_secret node.chef_environment do

@@ -34,10 +34,10 @@ end
 
 chef_ingredient 'delivery' do
   config <<-EOS
-delivery_fqdn "delivery.cerny.cc"
+delivery_fqdn "#{node['delivery']['fqdn']}"
 delivery['chef_username']    = "delivery"
 delivery['chef_private_key'] = "/etc/delivery/delivery.pem"
-delivery['chef_server']      = "https://chef.cerny.cc/organizations/chef_delivery"
+delivery['chef_server']      = "#{node['delivery']['chef_server']}"
 delivery['default_search']   = "((recipes:cerny\\\\\\\\:\\\\\\\\:delivery_build) AND chef_environment:#{node.chef_environment})"
   EOS
 end
