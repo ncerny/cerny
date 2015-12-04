@@ -27,8 +27,7 @@ def load_secrets
   chef_secrets
 end
 
-# rubocop:disable Metrics/MethodLength
-def write_secrets(product = nil)
+def write_secrets(product = nil) # rubocop:disable Metrics/MethodLength
   load_secrets.each do |key, value|
     product ||= key
     next unless product == key
@@ -44,9 +43,8 @@ def write_secrets(product = nil)
       end
     end
   end
-end
+end # rubocop:enable Metrics/MethodLength
 
-# rubocop:disable Metrics/AbcSize
 def gather_secrets
   hash = { 'id' => node.chef_environment }
   Dir.glob('/etc/opscode*').each do |dir|
@@ -55,12 +53,20 @@ def gather_secrets
       hash[dir][file] = IO.read(file)
     end
   end
-  hash['/etc/delivery'] ||= {}
-  Dir.glob('/etc/delivery/{**,.ssh}/*').each do |file|
-    hash['/etc/delivery'][file] = IO.read(file)
-  end
   hash
 end
 
-# rubocop:enable Metrics/AbcSize
-# rubocop:enable Metrics/MethodLength
+def gather_delivery
+  hash = { 'id' => 'builder_keys' }
+  hash['delivery_pem'] = IO.read('/home/chef-users/delivery.pem')
+  hash.to_json
+end
+
+def gen_secret_key
+  secret = ''
+  so = Mixlib::ShellOut.new('openssl rand -base64 512')
+  so.run_command.stdout.each_line do |line|
+    secret << line.chomp
+  end
+  secret
+end

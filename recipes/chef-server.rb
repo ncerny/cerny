@@ -15,10 +15,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# rubocop:disable LineLength
 
 require 'securerandom'
+
+chef_gem 'cheffish'
 
 include_recipe 'chef-vault'
 include_recipe 'chef-server'
@@ -54,26 +54,24 @@ node['chef-server']['users'].each do |user|
   node.run_state['chef-users'][user[:name]] ||= {}
   node.run_state['chef-users'][user[:name]]['password'] = SecureRandom.hex(36)
 
-  user user[:name] do
-    comment "#{user[:first]} #{user[:last]}"
-    shell '/bin/bash'
-    home "/home/#{user[:name]}"
-    password node.run_state['chef-users'][user[:name]]['password']
-    action :create
+  directory '/home/chef-user-data' do
+    owner 'root'
+    group 'root'
+    mode '0700'
   end
 
-  file "/home/#{user[:name]}/.password" do
+  file "/home/chef-user-data/#{user[:name]}.password" do
     sensitive true
     content node.run_state['chef-users'][user[:name]]['password']
-    owner user[:name]
-    group user[:name]
+    owner 'root'
+    group 'root'
     mode '0600'
     action :nothing
   end
 
-  file "/home/#{user[:name]}/#{user[:name]}.pem" do
-    owner user[:name]
-    group user[:name]
+  file "/home/chef-user-data/#{user[:name]}.pem" do
+    owner 'root'
+    group 'root'
     mode '0600'
     action :create
   end
@@ -84,9 +82,9 @@ node['chef-server']['users'].each do |user|
     lastname user[:last]
     email user[:email]
     password node.run_state['chef-users'][user[:name]]['password']
-    private_key_path "/home/#{user[:name]}/#{user[:name]}.pem"
+    private_key_path "/home/chef-user-data/#{user[:name]}.pem"
     action :create
-    notifies :create, "file[/home/#{user[:name]}/.password]", :immediately
+    notifies :create, "file[/home/chef-user-data/#{user[:name]}.password]", :immediately # rubocop:disable LineLength
   end
 end
 
@@ -99,36 +97,11 @@ node['chef-server']['orgs'].each do |org|
   end
 end
 
-execute 'Generate Encrypted Data Bag Secret' do
-  command 'openssl rand -base64 512 | tr -d "\r\n" > /etc/opscode/encrypted_data_bag_secret'
-  creates '/etc/opscode/encrypted_data_bag_secret'
+file '/etc/opscode/encrypted_data_bag_secret' do
+  content gen_secret_key
   owner 'root'
   group 'root'
   mode '0600'
-end
-
-directory '/etc/delivery'
-
-execute 'Delivery ssh keys' do
-  user 'delivery'
-  creates '/home/delivery/builder_key.pub'
-  command 'ssh-keygen -t rsa -q -f /home/delivery/builder_key -P ""'
-end
-
-link '/etc/delivery/delivery.pem' do
-  to '/home/delivery/delivery.pem'
-end
-
-link '/etc/delivery/builder_key' do
-  to '/home/delivery/builder_key'
-end
-
-link '/etc/delivery/builder_key.pub' do
-  to '/home/delivery/builder_key.pub'
-end
-
-link '/etc/delivery/encrypted_data_bag_secret' do
-  to '/etc/opscode/encrypted_data_bag_secret'
 end
 
 chef_vault_secret node.chef_environment do
@@ -138,6 +111,17 @@ chef_vault_secret node.chef_environment do
   admins node.name
   clients "chef_environment:#{node.chef_environment}"
   search "chef_environment:#{node.chef_environment}"
+end
+
+# Delivery data bag
+chef_data_bag 'keys' do
+  action :create
+end
+
+chef_data_bag_item 'delivery_builder_keys' do
+  action :create
+  encrypt	true
+  raw_json gather_delivery
 end
 
 # rubocop:enable LineLength
