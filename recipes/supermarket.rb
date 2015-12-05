@@ -26,6 +26,20 @@ end
 
 supermarket = JSON.load(load_secrets['/etc/opscode']['/etc/opscode/oc-id-applications/supermarket.json']) # rubocop:disable LineLength
 
+directory '/etc/supermarket/supermarket.cerny.cc' do
+  owner 'root'
+  group 'root'
+  mode '0700'
+end
+
+cookbook_file '/etc/supermarket/supermarket.cerny.cc/fullchain.pem' do
+  source 'fullchain.pem'
+end
+
+cookbook_file '/etc/supermarket/supermarket.cerny.cc/privkey.pem' do
+  source 'privkey.pem'
+end
+
 supermarket_server 'supermarket' do
   chef_server_url 'https://chef.cerny.cc'
   chef_oauth2_app_id supermarket['uid']
