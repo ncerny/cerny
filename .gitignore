@@ -16,3 +16,4 @@ bin/*
 .kitchen.local.yml
 
 files/default/delivery.license
+files/*/*.pem

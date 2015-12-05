@@ -20,6 +20,20 @@ require 'securerandom'
 
 chef_gem 'cheffish'
 
+directory '/etc/opscode/chef.cerny.cc' do
+  owner 'root'
+  group 'root'
+  mode '0700'
+end
+
+cookbook_file '/etc/opscode/chef.cerny.cc/fullchain.pem' do
+  source 'fullchain.pem'
+end
+
+cookbook_file '/etc/opscode/chef.cerny.cc/privkey.pem' do
+  source 'privkey.pem'
+end
+
 include_recipe 'chef-vault'
 include_recipe 'chef-server'
 include_recipe 'chef-server::addons'
