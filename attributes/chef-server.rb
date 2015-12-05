@@ -50,12 +50,7 @@ default['chef-server']['orgs'] = [
   {
     name: 'cerny',
     long_name: 'cerny.cc infrastructure',
-    admins: %w( ncerny )
-  },
-  {
-    name: 'chef_delivery',
-    long_name: 'Chef Delivery Organization',
-    admins: %w( delivery )
+    admins: %w( ncerny delivery )
   }
 ]
 
