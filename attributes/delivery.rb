@@ -18,4 +18,3 @@
 
 default['delivery']['fqdn'] = 'delivery.cerny.cc'
 default['delivery']['chef_server'] = 'https://chef.cerny.cc/organizations/cerny'
-default['delivery_build']['trusted_certs']['delivery server cert'] = '/etc/chef/trusted_certs/delivery.cerny.cc.crt'

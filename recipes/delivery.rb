@@ -32,12 +32,22 @@ directory '/etc/delivery/delivery.cerny.cc' do
   mode '0700'
 end
 
+directory '/var/opt/delivery/nginx/ca'
+
 cookbook_file '/etc/delivery/delivery.cerny.cc/fullchain.pem' do
   source 'fullchain.pem'
 end
 
 cookbook_file '/etc/delivery/delivery.cerny.cc/privkey.pem' do
   source 'privkey.pem'
+end
+
+link '/var/opt/delivery/nginx/ca/delivery.cerny.cc.crt' do
+  to '/etc/delivery/delivery.cerny.cc/fullchain.pem'
+end
+
+link '/var/opt/delivery/nginx/ca/delivery.cerny.cc.key' do
+  to '/etc/delivery/delivery.cerny.cc/privkey.pem'
 end
 
 cookbook_file '/var/opt/delivery/license/delivery.license' do
@@ -75,10 +85,10 @@ delivery['chef_username']    = "delivery"
 delivery['chef_private_key'] = "/etc/delivery/delivery.pem"
 delivery['chef_server']      = "#{node['delivery']['chef_server']}"
 delivery['default_search']   = "((recipes:cerny\\\\\\\\:\\\\\\\\:delivery_build) AND chef_environment:#{node.chef_environment})"
-delivery['delivery']['ssl_certificate'] = '/etc/delivery/delivery.cerny.cc/fullchain.pem'
-delivery['delivery']['ssl_certificate_key'] = '/etc/delivery/delivery.cerny.cc/privkey.pem'
-delivery['delivery']['ssl_ciphers'] = "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
-delivery['delivery']['ssl_protocols'] = "TLSv1.2"
+nginx['ssl_certificate'] = '/etc/delivery/delivery.cerny.cc/fullchain.pem'
+nginx['ssl_certificate_key'] = '/etc/delivery/delivery.cerny.cc/privkey.pem'
+nginx['ssl_ciphers'] = "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
+nginx['ssl_protocols'] = "TLSv1.2"
   EOS
 end
 
