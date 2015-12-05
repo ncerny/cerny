@@ -57,4 +57,4 @@ execute 'knife ssl fetch https://delivery.cerny.cc' do
 end
 
 include_recipe 'delivery_build'
-include_recipe 'push_jobs'
+include_recipe 'push-jobs'
