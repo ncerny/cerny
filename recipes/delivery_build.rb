@@ -20,6 +20,18 @@ directory '/etc/delivery' do
   recursive true
 end
 
+deliverybag = data_bag_item('keys', 'delivery_builder_keys')
+
+file '/etc/delivery/delivery.pem' do
+  content deliverybag['delivery_pem']
+  mode '0600'
+end
+
+file '/etc/delivery/builder_key' do
+  content deliverybag['builder_key']
+  mode '0600'
+end
+
 directory '/var/opt/delivery/license' do
   recursive true
 end
