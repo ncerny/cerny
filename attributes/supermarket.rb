@@ -16,9 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default['supermarket_omnibus']['config'] = <<-EOF
-  nginx['ssl_certificate'] = '/etc/supermarket/supermarket.cerny.cc/fullchain.pem'
-  nginx['ssl_certificate_key'] = '/etc/supermarket/supermarket.cerny.cc/privkey.pem'
-  nginx['ssl_ciphers'] = "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
-  nginx['ssl_protocols'] = "TLSv1.2"
-EOF
+default['supermarket_omnibus']['config']['ssl']['certificate'] = '/etc/supermarket/supermarket.cerny.cc/fullchain.pem'
+default['supermarket_omnibus']['config']['ssl']['certificate_key'] = '/etc/supermarket/supermarket.cerny.cc/privkey.pem'
+default['supermarket_omnibus']['config']['ssl']['ciphers'] = 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
+default['supermarket_omnibus']['config']['ssl']['protocols'] = 'TLSv1.2'
+default['supermarket_omnibus']['config']['nginx']['force_ssl'] = true
