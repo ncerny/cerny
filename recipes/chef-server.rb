@@ -136,8 +136,7 @@ end
 
 chef_data_bag_item 'keys/delivery_builder_keys' do
   action :create
-  encrypt	true
-  secret_path '/etc/opscode/encrypted_data_bag_secret'
+  secret_path '/etc/chef/encrypted_data_bag_secret'
   encryption_version 3
   raw_data lazy { { delivery_pem: IO.read('/home/chef-user-data/delivery.pem') } } # rubocop:disable LineLength
 end

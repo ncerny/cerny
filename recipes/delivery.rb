@@ -56,14 +56,15 @@ end
 
 chef_data_bag_item 'keys/delivery_builder_keys' do
   action :create
-  encrypt	true
   secret_path '/etc/chef/encrypted_data_bag_secret'
   encryption_version 3
   raw_data lazy { { builder_key: IO.read('/etc/delivery/builder_key') } } # rubocop:disable LineLength
 end
 
+deliverybag = data_bag_item('keys', 'delivery_builder_keys')
+
 file '/etc/delivery/delivery.pem' do
-  content data_bag_item('keys', 'delivery_builder_keys', IO.read('/etc/chef/encrypted_data_bag_secret'))['delivery_pem']
+  content deliverybag['delivery_pem']
   mode '0600'
 end
 
@@ -74,10 +75,10 @@ delivery['chef_username']    = "delivery"
 delivery['chef_private_key'] = "/etc/delivery/delivery.pem"
 delivery['chef_server']      = "#{node['delivery']['chef_server']}"
 delivery['default_search']   = "((recipes:cerny\\\\\\\\:\\\\\\\\:delivery_build) AND chef_environment:#{node.chef_environment})"
-nginx['ssl_certificate'] = '/etc/delivery/delivery.cerny.cc/fullchain.pem'
-nginx['ssl_certificate_key'] = '/etc/delivery/delivery.cerny.cc/privkey.pem'
-nginx['ssl_ciphers'] = "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
-nginx['ssl_protocols'] = "TLSv1.2"
+delivery['delivery']['ssl_certificate'] = '/etc/delivery/delivery.cerny.cc/fullchain.pem'
+delivery['delivery']['ssl_certificate_key'] = '/etc/delivery/delivery.cerny.cc/privkey.pem'
+delivery['delivery']['ssl_ciphers'] = "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
+delivery['delivery']['ssl_protocols'] = "TLSv1.2"
   EOS
 end
 
