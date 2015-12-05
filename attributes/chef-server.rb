@@ -27,8 +27,8 @@ default['chef-server']['configuration'] = <<-EOF
   rabbitmq['node_ip_address'] = '0.0.0.0'
   nginx['ssl_certificate'] = '/etc/opscode/chef.cerny.cc/fullchain.pem'
   nginx['ssl_certificate_key'] = '/etc/opscode/chef.cerny.cc/privkey.pem'
-  nginx['ssl_ciphers'] = "HIGH:MEDIUM:!LOW:!kEDH:!aNULL:!ADH:!eNULL:!EXP:!SSLv2:!SEED:!CAMELLIA:!PSK"
-  nginx['ssl_protocols'] = "TLSv1.1 TLSv1.2"
+  nginx['ssl_ciphers'] = "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
+  nginx['ssl_protocols'] = "TLSv1.2"
 EOF
 
 default['chef-server']['users'] = [
