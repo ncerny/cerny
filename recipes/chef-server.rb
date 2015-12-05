@@ -98,10 +98,12 @@ node['chef-server']['orgs'].each do |org|
 end
 
 file '/etc/opscode/encrypted_data_bag_secret' do
+  sensitive true
   content gen_secret_key
   owner 'root'
   group 'root'
   mode '0600'
+  not_if { File.exist?('/etc/opscode/encrypted_data_bag_secret') }
 end
 
 chef_vault_secret node.chef_environment do
@@ -118,10 +120,10 @@ chef_data_bag 'keys' do
   action :create
 end
 
-chef_data_bag_item 'delivery_builder_keys' do
+chef_data_bag_item 'keys/delivery_builder_keys' do
   action :create
   encrypt	true
-  raw_json gather_delivery
+  secret_path '/etc/opscode/encrypted_data_bag_secret'
+  encryption_version 3
+  raw_data lazy { { delivery_pem: IO.read('/home/chef-user-data/delivery.pem') } } # rubocop:disable LineLength
 end
-
-# rubocop:enable LineLength

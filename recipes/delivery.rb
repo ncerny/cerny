@@ -18,8 +18,6 @@
 #
 # rubocop:disable LineLength
 
-node.default['chef-client']['config']['encrypted_data_bag_secret'] = '/etc/delivery/encrypted_data_bag_secret'
-
 directory '/etc/delivery' do
   recursive true
 end
@@ -28,10 +26,31 @@ directory '/var/opt/delivery/license' do
   recursive true
 end
 
-write_secrets('/etc/delivery')
-
 cookbook_file '/var/opt/delivery/license/delivery.license' do
   source 'delivery.license'
+end
+
+execute 'Delivery ssh keys' do
+  creates '/etc/delivery/builder_key.pub'
+  command 'ssh-keygen -t rsa -q -f /etc/delivery/builder_key -P ""'
+end
+
+# Delivery data bag
+chef_data_bag 'keys' do
+  action :create
+end
+
+chef_data_bag_item 'keys/delivery_builder_keys' do
+  action :create
+  encrypt	true
+  secret_path '/etc/chef/encrypted_data_bag_secret'
+  encryption_version 3
+  raw_data lazy { { builder_key: IO.read('/etc/delivery/builder_key') } } # rubocop:disable LineLength
+end
+
+file '/etc/delivery/delivery.pem' do
+  content data_bag_item('keys', 'delivery_builder_keys', IO.read('/etc/chef/encrypted_data_bag_secret'))['delivery_pem']
+  mode '0600'
 end
 
 chef_ingredient 'delivery' do

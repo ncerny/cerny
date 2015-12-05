@@ -56,12 +56,6 @@ def gather_secrets
   hash
 end
 
-def gather_delivery
-  hash = { 'id' => 'builder_keys' }
-  hash['delivery_pem'] = IO.read('/home/chef-users/delivery.pem')
-  hash.to_json
-end
-
 def gen_secret_key
   secret = ''
   so = Mixlib::ShellOut.new('openssl rand -base64 512')
