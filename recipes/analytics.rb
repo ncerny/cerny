@@ -25,4 +25,18 @@ firewalld_service 'https' do
   notifies :reload, 'service[firewalld]', :delayed
 end
 
+directory '/etc/analytics/analytics.cerny.cc' do
+  owner 'root'
+  group 'root'
+  mode '0700'
+end
+
+cookbook_file '/etc/analytics/analytics.cerny.cc/fullchain.pem' do
+  source 'fullchain.pem'
+end
+
+cookbook_file '/etc/analytics/analytics.cerny.cc/privkey.pem' do
+  source 'privkey.pem'
+end
+
 include_recipe 'chef-analytics'

@@ -15,3 +15,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# rubocop:disable LineLength
+
+default['chef-analytics']['configuration']['nginx']['ssl_certificate'] = '/etc/analytics/analytics.cerny.cc/fullchain.pem'
+default['chef-analytics']['configuration']['nginx']['ssl_certificate_key'] = '/etc/analytics/analytics.cerny.cc/privkey.pem'
+default['chef-analytics']['configuration']['nginx']['ssl_ciphers'] = 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
+default['chef-analytics']['configuration']['nginx']['ssl_protocols'] = 'TLSv1.2'
+
+# rubocop:enable LineLength
