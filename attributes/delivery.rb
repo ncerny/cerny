@@ -18,3 +18,4 @@
 
 default['delivery']['fqdn'] = 'delivery.cerny.cc'
 default['delivery']['chef_server'] = 'https://chef.cerny.cc/organizations/cerny'
+default['delivery_build']['delivery-cli']['options'] = '--nogpgcheck'
