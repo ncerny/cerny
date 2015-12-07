@@ -18,9 +18,9 @@
 #
 # rubocop:disable LineLength
 
-default['chef-analytics']['configuration']['nginx']['ssl_certificate'] = '/etc/analytics/analytics.cerny.cc/fullchain.pem'
-default['chef-analytics']['configuration']['nginx']['ssl_certificate_key'] = '/etc/analytics/analytics.cerny.cc/privkey.pem'
-default['chef-analytics']['configuration']['nginx']['ssl_ciphers'] = 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
-default['chef-analytics']['configuration']['nginx']['ssl_protocols'] = 'TLSv1.2'
+default['chef-analytics']['configuration']['ssl']['certificate'] = '/etc/opscode-analytics/analytics.cerny.cc/fullchain.pem'
+default['chef-analytics']['configuration']['ssl']['certificate_key'] = '/etc/opscode-analytics/analytics.cerny.cc/privkey.pem'
+default['chef-analytics']['configuration']['ssl']['ciphers'] = 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'
+default['chef-analytics']['configuration']['ssl']['protocols'] = 'TLSv1.2'
 
 # rubocop:enable LineLength
