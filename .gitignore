@@ -18,4 +18,4 @@ bin/*
 files/default/delivery.license
 files/*/*.pem
 
-recipes/secret.rb
+attributes/secret.rb
