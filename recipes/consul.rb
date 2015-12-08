@@ -15,6 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+user node['consul']['service_user'] do
+  group node['consul']['service_group']
+  shell '/sbin/nologin'
+end
+
 consul_config 'consul' do
   owner node['consul']['service_user']
   group node['consul']['service_group']
