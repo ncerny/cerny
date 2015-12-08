@@ -20,6 +20,10 @@ require 'securerandom'
 
 chef_gem 'cheffish'
 
+if node.run_state['chef-server']['configuration']
+  default['chef-server']['configuration'] += node.run_state['chef-server']['configuration'] # rubocop:disable LineLength
+end
+
 directory '/etc/opscode/chef.cerny.cc' do
   owner 'root'
   group 'root'
